@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +30,10 @@ public class BookDAO {
 			pstmt.setString(2, vo.getBookPub());
 			pstmt.setString(3, vo.getBookPubDate());
 			pstmt.setInt(4, vo.getAuthorId());
+			int result = pstmt.executeUpdate(); // insert,update,delete 실행시 사용하는 함수 executeUpdate() 함수
 
 			// 4.결과처리
-			int count = pstmt.executeUpdate(); // insert,update,delete 실행시 사용하는 함수 executeUpdate() 함수
-			System.out.println(count + "처리완료");
+			System.out.println("처리결과 : " + result);
 
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
@@ -41,7 +42,7 @@ public class BookDAO {
 		}
 	}
 
-	public List<BookVO> selectBook() {
+	public List<BookVO> selectAllBook() {
 		// 0. import java.sql.*;
 		connect();
 		try {
@@ -55,9 +56,9 @@ public class BookDAO {
 			while (rs.next()) {
 				BookVO vo = new BookVO();
 				int bookId = rs.getInt("book_id");
-				String bookName = rs.getString("title");
-				String bookPub = rs.getString("pub");
-				String bookPubDate = String.valueOf(rs.getDate("pub_date"));
+				String bookName = rs.getString("book_name");
+				String bookPub = rs.getString("book_pub");
+				String bookPubDate = String.valueOf(rs.getDate("book_pub_date"));
 				int authorId = rs.getInt("author_id");
 				String authorName = rs.getString("author_name");
 				String authorDesc = rs.getString("author_desc");
@@ -83,8 +84,51 @@ public class BookDAO {
 		}
 
 	}
+	
+	public void updateBook(BookVO bvo) {
+		// 0. import java.sql.*;
+		connect();
+		try {
+			// 3. SQL문 준비 / 바인딩 / 실행
+			String query = "update book set book_name = ? , book_pub = ? , book_pub_date = ? , author_id = ? where book_id = ?"; //pstmt 객체를 사용하면 변수명 대신 ? 를 사용하여 삽입 할 수 있다.
+			pstmt = conn.prepareStatement(query); //conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉는다
+			pstmt.setString(1, bvo.getBookName());
+			pstmt.setString(2, bvo.getBookPub());  //쿼리의 물음표 인덱스에 값을 채워주는 객체
+			pstmt.setString(3, bvo.getBookPubDate());
+			pstmt.setInt(4, bvo.getAuthorId());
+			pstmt.setInt(5, bvo.getBookId());
+			int result = pstmt.executeUpdate(); // insert,update,delete 실행시 사용하는 함수 executeUpdate() 함수
+			
+			// 4.결과처리
+			System.out.println("처리 결과 : " + result);
+		} catch (SQLException e) {
+			System.out.println("error:" + e);
+		} finally {
+			close();
+		}
+	}
+	
+	public void deleteBook(int bookId) {
+		// 0. import java.sql.*;
+		connect();
+		try {
+			// 3. SQL문 준비 / 바인딩 / 실행
+			String query = "delete from book where book_id = ? "; //pstmt 객체를 사용하면 변수명 대신 ? 를 사용하여 삽입 할 수 있다.
+			pstmt = conn.prepareStatement(query); //conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉는다
+			pstmt.setInt(1, bookId); //쿼리의 물음표 인덱스에 값을 채워주는 객체
+			int result = pstmt.executeUpdate(); // insert,update,delete 실행시 사용하는 함수 executeUpdate() 함수
+			
+			// 4.결과처리	
+			System.out.println("처리 결과 : " + result);
+		} catch (SQLException e) {
+			System.out.println("error:" + e);
+		} finally {
+			close();
+		}
+		
+	}
 
-	public void connect() {
+	private void connect() {
 		try {
 			// 1. JDBC 드라이버 (Oracle) 로딩
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -101,7 +145,7 @@ public class BookDAO {
 
 	}
 
-	public void close() {
+	private void close() {
 		// 5. 자원정리
 
 		try {
@@ -121,4 +165,5 @@ public class BookDAO {
 			System.out.println("error:" + e);
 		}
 	}
+
 }
