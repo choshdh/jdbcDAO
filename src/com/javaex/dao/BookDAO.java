@@ -14,9 +14,9 @@ import com.javaex.vo.BookVO;
 
 public class BookDAO {
 	
-	Connection conn = null;
-	PreparedStatement pstmt = null;
-	ResultSet rs = null;
+	Connection conn = null; // db 와 java 를 연결 해주는 객체이면서 쿼리를 입력받아 쿼리 실행 및 준비 담당을 하는 PreparedStatement 객체를 뱉어낸다
+	PreparedStatement pstmt = null; //쿼리 입력 준비를 담당하는 객체로써 자신(객체)이(가) 가진 기능들로 입력 되어있는 쿼리를 좀더 편하게 수정 할 수 있게 해준다.
+	ResultSet rs = null; //쿼리를 실행한 결과값(객체)으로써,, DB에서 테이블이라고 불리는 정보 덩어리를 꺼내와서 java에서 사용 할 수 있게끔 ResultSet 이라는 정보 덩어리(객체)로 만든것
 
 	public void insertBook(BookVO vo) {
 		// 0. import java.sql.*;
@@ -25,8 +25,8 @@ public class BookDAO {
 			// 3. SQL문 준비 / 바인딩 / 실행
 			String query = "insert into book values(seq_book_id.nextval, ? , ? , ? , ?)"; // pstmt 객체를 사용하면 변수명 대신
 																							// ? 를 사용하여 삽입 할 수 있다.
-			pstmt = conn.prepareStatement(query); // conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉는다
-			pstmt.setString(1, vo.getBookName()); // 쿼리의 물음표 인덱스에 값을 채워주는 객체
+			pstmt = conn.prepareStatement(query); // conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉어냈다
+			pstmt.setString(1, vo.getBookName()); // 쿼리의 ? 인덱스에 값을 채워 주고있다.
 			pstmt.setString(2, vo.getBookPub());
 			pstmt.setString(3, vo.getBookPubDate());
 			pstmt.setInt(4, vo.getAuthorId());
@@ -48,8 +48,8 @@ public class BookDAO {
 		try {
 			// 3. SQL문 준비 / 바인딩 / 실행
 			String query = "select * from book,author where book.author_id = author.author_id";
-			pstmt = conn.prepareStatement(query); // conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉는다
-			rs = pstmt.executeQuery(); // DB에 있는 정보를 가져와 ResultSet 객체로 만든다
+			pstmt = conn.prepareStatement(query);
+			rs = pstmt.executeQuery(); // select만 유일하게 executeQuery() 함수를 사용한다.
 			
 			List<BookVO> l = new ArrayList<BookVO>(); //DB 에서 받아오는 테이블의 레코드 값들을 JAVA 에서 사용 할 수 있게 List 객체에 BookVO 객체 별로 담는다
 			// 4.결과처리
@@ -91,9 +91,9 @@ public class BookDAO {
 		try {
 			// 3. SQL문 준비 / 바인딩 / 실행
 			String query = "update book set book_name = ? , book_pub = ? , book_pub_date = ? , author_id = ? where book_id = ?"; //pstmt 객체를 사용하면 변수명 대신 ? 를 사용하여 삽입 할 수 있다.
-			pstmt = conn.prepareStatement(query); //conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉는다
+			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, bvo.getBookName());
-			pstmt.setString(2, bvo.getBookPub());  //쿼리의 물음표 인덱스에 값을 채워주는 객체
+			pstmt.setString(2, bvo.getBookPub());
 			pstmt.setString(3, bvo.getBookPubDate());
 			pstmt.setInt(4, bvo.getAuthorId());
 			pstmt.setInt(5, bvo.getBookId());
@@ -113,9 +113,9 @@ public class BookDAO {
 		connect();
 		try {
 			// 3. SQL문 준비 / 바인딩 / 실행
-			String query = "delete from book where book_id = ? "; //pstmt 객체를 사용하면 변수명 대신 ? 를 사용하여 삽입 할 수 있다.
-			pstmt = conn.prepareStatement(query); //conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉는다
-			pstmt.setInt(1, bookId); //쿼리의 물음표 인덱스에 값을 채워주는 객체
+			String query = "delete from book where book_id = ? ";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, bookId);
 			int result = pstmt.executeUpdate(); // insert,update,delete 실행시 사용하는 함수 executeUpdate() 함수
 			
 			// 4.결과처리	

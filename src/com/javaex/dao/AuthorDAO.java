@@ -14,9 +14,9 @@ import com.javaex.vo.BookVO;
 
 public class AuthorDAO {
 
-	Connection conn = null;
-	PreparedStatement pstmt = null;
-	ResultSet rs = null;
+	Connection conn = null; // db 와 java 를 연결 해주는 객체이면서 쿼리를 입력받아 쿼리 실행 및 준비 담당을 하는 PreparedStatement 객체를 뱉어낸다
+	PreparedStatement pstmt = null; //쿼리 입력 준비를 담당하는 객체로써 자신(객체)이(가) 가진 기능들로 입력 되어있는 쿼리를 좀더 편하게 수정 할 수 있게 해준다.
+	ResultSet rs = null; //쿼리를 실행한 결과값(객체)으로써,, DB에서 테이블이라고 불리는 정보 덩어리를 꺼내와서 java에서 사용 할 수 있게끔 ResultSet 이라는 정보 덩어리(객체)로 만든것
 
 	public void insertAuthor(AuthorVO vo) {
 		// 0. import java.sql.*;
@@ -25,8 +25,8 @@ public class AuthorDAO {
 			// 3. SQL문 준비 / 바인딩 / 실행
 			String query = "insert into author values(seq_author_id.nextval, ? , ? )"; // pstmt 객체를 사용하면 변수명 대신 ? 를 사용하여
 																						// 삽입 할 수 있다.
-			pstmt = conn.prepareStatement(query); // conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉는다
-			pstmt.setString(1, vo.getAuthorName()); // 쿼리의 물음표 인덱스에 값을 채워주는 객체
+			pstmt = conn.prepareStatement(query); // conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉어냈다
+			pstmt.setString(1, vo.getAuthorName()); // 쿼리의 ? 인덱스에 값을 채워 주고있다.
 			pstmt.setString(2, vo.getAuthorDesc());
 			int result = pstmt.executeUpdate(); // insert,update,delete 실행시 사용하는 함수 executeUpdate() 함수
 			
@@ -46,8 +46,8 @@ public class AuthorDAO {
 		try {
 			// 3. SQL문 준비 / 바인딩 / 실행
 			String query = "select * from author";
-			pstmt = conn.prepareStatement(query); //conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉는다
-			rs = pstmt.executeQuery(); //DB에 있는 정보를 가져와 ResultSet 객체로 만든다
+			pstmt = conn.prepareStatement(query);
+			rs = pstmt.executeQuery(); // select만 유일하게 executeQuery() 함수를 사용한다.
 			
 			List<AuthorVO> l = new ArrayList<AuthorVO>();
 			// 4.결과처리
@@ -82,9 +82,9 @@ public class AuthorDAO {
 		try {
 			// 3. SQL문 준비 / 바인딩 / 실행
 			String query = "update author set author_name = ? , author_desc = ? where author_id = ? "; //pstmt 객체를 사용하면 변수명 대신 ? 를 사용하여 삽입 할 수 있다.
-			pstmt = conn.prepareStatement(query); //conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉는다
+			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, avo.getAuthorName());
-			pstmt.setString(2, avo.getAuthorDesc());  //쿼리의 물음표 인덱스에 값을 채워주는 객체
+			pstmt.setString(2, avo.getAuthorDesc());
 			pstmt.setInt(3, avo.getAuthorId());
 			int result = pstmt.executeUpdate(); // insert,update,delete 실행시 사용하는 함수 executeUpdate() 함수
 			
@@ -105,10 +105,10 @@ public class AuthorDAO {
 				connect();
 		try {
 			// 3. SQL문 준비 / 바인딩 / 실행
-			String query = "delete from author where author_id = ? "; //pstmt 객체를 사용하면 변수명 대신 ? 를 사용하여 삽입 할 수 있다.
-			pstmt = conn.prepareStatement(query); //conn 객체가 쿼리를 받아서 pstmt 라는 객체로 만들어 뱉는다
-			pstmt.setInt(1, authorId); //쿼리의 물음표 인덱스에 값을 채워주는 객체
-			int result = pstmt.executeUpdate(); // insert,update,delete 실행시 사용하는 함수 executeUpdate() 함수
+			String query = "delete from author where author_id = ? ";
+			pstmt = conn.prepareStatement(query); 
+			pstmt.setInt(1, authorId);
+			int result = pstmt.executeUpdate();
 			
 			// 4.결과처리	
 			System.out.println("처리 결과 : " + result);
